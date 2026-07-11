@@ -35,7 +35,10 @@ const LiveWorkout = () => {
       setIsStreaming(true);
       
       const token = localStorage.getItem('access_token');
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/api/workout/stream';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const defaultWsUrl = apiUrl.replace(/^http/, 'ws') + '/workout/stream';
+      const wsUrl = import.meta.env.VITE_WS_URL || defaultWsUrl;
+      console.log('Connecting to WebSocket:', `${wsUrl}/${token}`);
       wsRef.current = new WebSocket(`${wsUrl}/${token}`);
       
       wsRef.current.onmessage = (event) => {
