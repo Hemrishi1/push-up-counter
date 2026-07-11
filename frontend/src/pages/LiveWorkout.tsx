@@ -28,9 +28,10 @@ const LiveWorkout = () => {
   const startWorkout = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(e => console.error("Video play error:", e));
+        }
       streamRef.current = stream;
       setIsStreaming(true);
       
@@ -41,7 +42,10 @@ const LiveWorkout = () => {
       console.log('Connecting to WebSocket:', `${wsUrl}/${token}`);
       wsRef.current = new WebSocket(`${wsUrl}/${token}`);
       
+      let isFramePending = false;
+      
       wsRef.current.onmessage = (event) => {
+        isFramePending = false;
         const data = JSON.parse(event.data);
         if (data.type === 'result') {
           setStats({ count: data.count, fps: data.fps, percent: data.percent });
@@ -66,14 +70,17 @@ const LiveWorkout = () => {
       const sendFrames = () => {
         if (!isStreaming || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
         
-        const canvas = document.createElement('canvas');
-        canvas.width = 640;
-        canvas.height = 480;
-        const ctx = canvas.getContext('2d');
-        if (ctx && videoRef.current) {
-          ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-          const base64Data = canvas.toDataURL('image/jpeg', 0.5);
-          wsRef.current.send(JSON.stringify({ type: 'frame', data: base64Data }));
+        if (!isFramePending) {
+          const canvas = document.createElement('canvas');
+          canvas.width = 640;
+          canvas.height = 480;
+          const ctx = canvas.getContext('2d');
+          if (ctx && videoRef.current && videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+            ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+            const base64Data = canvas.toDataURL('image/jpeg', 0.5);
+            wsRef.current.send(JSON.stringify({ type: 'frame', data: base64Data }));
+            isFramePending = true;
+          }
         }
         
         requestAnimationFrame(sendFrames);
