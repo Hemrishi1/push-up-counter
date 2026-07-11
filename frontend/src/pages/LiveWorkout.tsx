@@ -75,7 +75,7 @@ const LiveWorkout = () => {
           canvas.width = 640;
           canvas.height = 480;
           const ctx = canvas.getContext('2d');
-          if (ctx && videoRef.current && videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+          if (ctx && videoRef.current && videoRef.current.readyState >= 2) { // 2 = HAVE_CURRENT_DATA
             ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
             const base64Data = canvas.toDataURL('image/jpeg', 0.5);
             wsRef.current.send(JSON.stringify({ type: 'frame', data: base64Data }));
@@ -90,8 +90,9 @@ const LiveWorkout = () => {
         sendFrames();
       };
       
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error accessing camera:", err);
+      alert("Could not access the camera. Please ensure you have granted camera permissions to this site and that a camera is connected. (" + err.message + ")");
     }
   };
 
