@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { useAuth } from '../context/AuthContext';
+
 import api from '../services/api';
 import { Play, Square, Activity, Target } from 'lucide-react';
 
@@ -13,8 +13,7 @@ const LiveWorkout = () => {
   const [duration, setDuration] = useState(0);
   const wsRef = useRef<WebSocket | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const { user } = useAuth();
-  
+
   // Audio for feedback
   const beepSound = useRef(new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...')); // Simplified placeholder or user provides file
 
