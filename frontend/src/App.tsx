@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LiveWorkout from './pages/LiveWorkout';
+import History from './pages/History';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -26,8 +28,8 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/workout/live" element={<LiveWorkout />} />
-              <Route path="/history" element={<div className="text-2xl font-bold">History (Coming Soon)</div>} />
-              <Route path="/settings" element={<div className="text-2xl font-bold">Settings (Coming Soon)</div>} />
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>
 

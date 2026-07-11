@@ -21,4 +21,15 @@ class WorkoutInDBBase(WorkoutBase):
         from_attributes = True
 
 class Workout(WorkoutInDBBase):
-    pass
+    @classmethod
+    def from_beanie(cls, workout_doc):
+        return cls(
+            id=str(workout_doc.id),
+            user_id=str(workout_doc.user_id),
+            pushups=workout_doc.pushups,
+            duration=workout_doc.duration,
+            calories=workout_doc.calories,
+            accuracy=workout_doc.accuracy,
+            average_speed=workout_doc.average_speed,
+            created_at=workout_doc.created_at,
+        )

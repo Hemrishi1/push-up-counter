@@ -22,7 +22,7 @@ async def end_workout(
         average_speed=workout_in.average_speed
     )
     await workout.insert()
-    return workout
+    return WorkoutSchema.from_beanie(workout)
 
 @router.get("/history", response_model=List[WorkoutSchema])
 async def get_workout_history(
@@ -31,7 +31,7 @@ async def get_workout_history(
     current_user: User = Depends(get_current_user)
 ):
     workouts = await Workout.find(Workout.user_id == current_user.id).sort(-Workout.created_at).skip(skip).limit(limit).to_list()
-    return workouts
+    return [WorkoutSchema.from_beanie(w) for w in workouts]
 
 @router.get("/latest", response_model=WorkoutSchema)
 async def get_latest_workout(
@@ -40,7 +40,7 @@ async def get_latest_workout(
     workout = await Workout.find(Workout.user_id == current_user.id).sort(-Workout.created_at).first_or_none()
     if not workout:
         raise HTTPException(status_code=404, detail="No workouts found")
-    return workout
+    return WorkoutSchema.from_beanie(workout)
 
 from app.ai.pushup_service import ConnectionManager, process_frame
 
