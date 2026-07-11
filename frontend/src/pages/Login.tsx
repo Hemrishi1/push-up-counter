@@ -30,7 +30,7 @@ const Login = () => {
         }
       });
       
-      login(response.data.access_token);
+      await login(response.data.access_token);
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Invalid credentials');
