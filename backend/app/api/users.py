@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/profile", response_model=UserSchema)
 async def read_user_profile(current_user: User = Depends(get_current_user)):
-    return current_user
+    return UserSchema.from_beanie(current_user)
 
 @router.put("/profile", response_model=UserSchema)
 async def update_user_profile(
@@ -28,4 +28,4 @@ async def update_user_profile(
         current_user.password = get_password_hash(user_in.password)
         
     await current_user.save()
-    return current_user
+    return UserSchema.from_beanie(current_user)
