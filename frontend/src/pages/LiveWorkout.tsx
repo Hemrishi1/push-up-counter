@@ -68,7 +68,7 @@ const LiveWorkout = () => {
 
       // Start sending frames
       const sendFrames = () => {
-        if (!isStreaming || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
         
         if (!isFramePending) {
           const canvas = document.createElement('canvas');
