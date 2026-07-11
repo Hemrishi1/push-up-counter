@@ -15,8 +15,10 @@ class UserUpdate(BaseModel):
     avatar: Optional[str] = None
     password: Optional[str] = None
 
-class UserInDBBase(UserBase):
+class User(BaseModel):
     id: str
+    name: str
+    email: EmailStr
     avatar: Optional[str] = None
     created_at: datetime
     updated_at: datetime
@@ -24,5 +26,13 @@ class UserInDBBase(UserBase):
     class Config:
         from_attributes = True
 
-class User(UserInDBBase):
-    pass
+    @classmethod
+    def from_beanie(cls, user_doc):
+        return cls(
+            id=str(user_doc.id),
+            name=user_doc.name,
+            email=user_doc.email,
+            avatar=user_doc.avatar,
+            created_at=user_doc.created_at,
+            updated_at=user_doc.updated_at,
+        )

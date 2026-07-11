@@ -13,7 +13,12 @@ class User(Document):
 
     class Settings:
         name = "users"
-        indexes = [
-            "email",
-            "name"
-        ]
+
+    class Config:
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "name": "John Doe",
+                "email": "john@example.com",
+            }
+        }

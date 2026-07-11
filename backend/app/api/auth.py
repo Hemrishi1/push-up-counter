@@ -14,8 +14,8 @@ router = APIRouter()
 
 @router.post("/register", response_model=UserSchema)
 async def register(user_in: UserCreate):
-    user = await User.find_one(User.email == user_in.email)
-    if user:
+    existing = await User.find_one(User.email == user_in.email)
+    if existing:
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system.",
@@ -26,12 +26,12 @@ async def register(user_in: UserCreate):
         name=user_in.name,
     )
     await user.insert()
-    
+
     # Create default goals for the user
     goal = Goal(user_id=user.id)
     await goal.insert()
-    
-    return user
+
+    return UserSchema.from_beanie(user)
 
 @router.post("/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
